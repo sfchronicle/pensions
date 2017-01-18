@@ -26,9 +26,6 @@ rateData.forEach(function(d) {
 var ratesNested = d3.nest()
   .key(function(d){ return d.group; })
   .entries(rateData);
-  // .map(rateData, d3.map);
-
-console.log(ratesNested);
 
 // setting sizes of interactive
 var margin = {
@@ -126,14 +123,9 @@ if (screen.width <=480) {
      .text("Contribution rates (%)");
 
 svg.append("g")
-    // .attr("class", "cities")
-  .selectAll("path")
   .data(ratesNested)
   .enter().append("path")
-    .attr("d", function(d) {
-      // d.line = this;
-      return valueline(d.values);
-    });
+    .attr("d", function(d){ return valueline(d.values)});
 
 var focus = svg.append("g")
     .attr("transform", "translate(-100,-100)")
@@ -159,108 +151,33 @@ if (screen.width >= 480) {
 var voronoiGroup = svg.append("g")
     .attr("class", "voronoi");
 
-console.log(ratesNested);
-
-// ratesNested.forEach(function(d) {
-  // var class_list = "line voronoi id"+d.key;
+ratesNested.forEach(function(d) {
+  var class_list = "line voronoi id"+d.key;
   svg.append("path")
-    .data(ratesNested)
-    // .attr("class", class_list)
-    // .attr("id","id"+d.key)
-    // .style("stroke", color_by_dataset(d.key))//cscale(d.key))//
-    .attr("d", function(d) { d.line = this; return valueline(d.values); });//valueline(d.values))
-// });
-
-console.log("voronoi data");
-console.log(voronoi.polygons(d3.merge(ratesNested.map(function(d) { return d.values; }))));
+    .attr("class", class_list)
+    // .style("stroke-dasharray", stroke_by_dataset(d.key))
+    .style("stroke", color_by_dataset(d.key))//cscale(d.key))//
+    .attr("d", valueline(d.values));
+});
 
 voronoiGroup.selectAll(".voronoi")
-  // .data(voronoi.polygons(ratesNested))
   .data(voronoi.polygons(d3.merge(ratesNested.map(function(d){
-    console.log("this is d");
-    console.log(d);
-    console.log("this is d.values");
-    console.log(d.values);
     return d.values;
   }))))
   .enter().append("path")
     .attr("d", function(d) {
-      console.log(d);
       return d ? "M" + d.join("L") + "Z" : null;
     })
     .on("mouseover", mouseover)
     .on("mouseout", mouseout);
 
-// console.log(mouseover);
-// console.log(mouseout);
-
-// function mouseover(d) {
-//   console.log("mouseover");
-//   console.log(d);
-//   // d3.select(d.data.city.line).classed("line-hover", true);
-//   // d.data.city.line.parentNode.appendChild(d.data.city.line);
-//   focus.attr("transform", "translate(" + x(d.data.year) + "," + y(d.data.value) + ")");
-//   focus.select("text").text(d.data.data.value);
-// }
-//
-// function mouseout(d) {
-//   console.log("mouseout");
-//   console.log(d);
-//   // d3.select(d.data.city.line).classed("line-hover", false);
-//   focus.attr("transform", "translate(-100,-100)");
-// }
-
-// var flatData = [];
-// rateData.forEach(function(d,idx){
-//   var datetemp = parseYear(d.year);
-//   flatData.push(
-//     {key: d.group, rate: d.rate, year: datetemp, yearString: d.year, rateShort: Math.round(d.rate*100)/100}
-//   );
-// });
-//
-// console.log(flatData);
-// console.log(voronoiGroup);
-// console.log(voronoi(flatData));
-
 function mouseover(d) {
-  console.log("mousing over");
-  console.log(d);
   d3.select(".id"+d.data.key).classed("line-hover", true);
   focus.attr("transform", "translate(" + x(d.data.year) + "," + y(d.data.rate) + ")");
   focus.select("text").text(d.data.rateShort+"% in "+d.data.yearString);
 }
 
 function mouseout(d) {
-  console.log(d);
   d3.select(".id"+d.data.key).classed("line-hover", false);
   focus.attr("transform", "translate(-100,-100)");
 }
-
-// voronoiGroup.selectAll("path")
-//   .data(voronoi(flatData))
-//   .enter().append("path")
-//   .attr("d", function(d) {
-//     console.log(d);
-//     if (d) {
-//       return "M" + d.join("L") + "Z";
-//     }
-//   })
-//   .datum(function(d) {
-//     if (d) {
-//       console.log(d.point);
-//       return d.point;
-//     }
-//   })
-//   .on("mouseover", mouseover)
-//   .on("mouseout", mouseout);
-//
-// ratesNested.forEach(function(d) {
-//   var class_list = "line voronoi id"+d.key;
-//   svg.append("path")
-//     .attr("d", function(d) { d.line = this; return valueline(d.values); })
-//     .attr("class", class_list)
-//     .attr("id","id"+d.key)
-//     .style("stroke", color_by_dataset(d.key))//cscale(d.key))//
-//     // .attr("d", valueline(d.values))
-//
-// });
