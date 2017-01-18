@@ -127,27 +127,6 @@ svg.append("g")
   .enter().append("path")
     .attr("d", function(d){ return valueline(d.values)});
 
-var focus = svg.append("g")
-    .attr("transform", "translate(-100,-100)")
-    .attr("class", "focus");
-
-if (screen.width >= 480) {
-  focus.append("circle")
-      .attr("r", 3.5);
-
-  focus.append("rect")
-      .attr("x",-110)
-      .attr("y",-25)
-      .attr("width","120px")
-      .attr("height","20px")
-      .attr("opacity","1")
-      .attr("fill","white");
-
-  focus.append("text")
-      .attr("x", -100)
-      .attr("y", -10);
-}
-
 var voronoiGroup = svg.append("g")
     .attr("class", "voronoi");
 
@@ -180,4 +159,26 @@ function mouseover(d) {
 function mouseout(d) {
   d3.select(".id"+d.data.key).classed("line-hover", false);
   focus.attr("transform", "translate(-100,-100)");
+}
+
+var focus = svg.append("g")
+    .attr("transform", "translate(-100,-100)")
+    .attr("class", "focus");
+
+if (screen.width >= 480) {
+  focus.append("circle")
+      .attr("r", 3.5);
+
+  focus.append("rect")
+      .attr("x",-110)
+      .attr("y",-25)
+      .attr("width","120px")
+      .attr("height","20px")
+      .attr("opacity","1")
+      .attr("fill","white")
+      .attr("pointer-events", "none");
+
+  focus.append("text")
+      .attr("x", -100)
+      .attr("y", -10);
 }
